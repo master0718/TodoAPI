@@ -15,7 +15,7 @@ It showcases:
 - OpenAPI
 - User management with ASP.NET Core Identity
 - Cookie authentication
-- JWT authentication
+- Bearer authentication
 - Proxying requests from the front end application server using YARP's IHttpForwarder
 - Rate Limiting
 - Writing integration tests for your REST API
@@ -23,7 +23,7 @@ It showcases:
 ## Prerequisites
 
 ### .NET
-1. [Install .NET 7](https://dotnet.microsoft.com/en-us/download)
+1. [Install .NET 8](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
 
 ### Database
 1. Install the **dotnet-ef** tool: `dotnet tool install dotnet-ef -g`
@@ -31,14 +31,6 @@ It showcases:
     1. Run `mkdir .db` to create the local database folder.
     1. Run `dotnet ef database update` to create the database.
 1. Learn more about [dotnet-ef](https://learn.microsoft.com/en-us/ef/core/cli/dotnet)
-
-### JWT 
-
-1. To initialize the keys for JWT generation, run `dotnet user-jwts` in to [TodoApi](TodoApi) folder:
-
-    ```
-    dotnet user-jwts create
-    ```
 
 ### Running the application
 To run the application, run both the [Todo.Web/Server](Todo.Web/Server) and [TodoApi](TodoApi). Below are different ways to run both applications:
@@ -109,21 +101,26 @@ The Todo REST API can run standalone as well. You can run the [TodoApi](TodoApi)
 
 Before executing any requests, you need to create a user and get an auth token.
 
-1. To create a new user, run the application and POST a JSON payload to `/users` endpoint:
+1. To create a new user, run the application and POST a JSON payload to `/users/register` endpoint:
 
     ```json
     {
-      "username": "myuser",
+      "email": "myuser@contoso.com",
       "password": "<put a password here>"
     }
     ```
-1. To get a token for the above user run `dotnet user-jwts` to create a JWT token with the same user name specified above e.g:
+1. To get a token for the above user, hit the `/users/login` endpoint with the above user email and password. The response will look like this:
 
+    ```json
+    {
+      "tokenType": "Bearer",
+      "accessToken": "string",
+      "expiresIn": <seconds>,
+      "refreshToken": "string"
+    }
     ```
-    dotnet user-jwts create -n myuser
-    ```
-1. You should be able to use this token to make authenticated requests to the todo endpoints.
-1. Learn more about [user-jwts](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/minimal-apis/security?view=aspnetcore-7.0#using-dotnet-user-jwts-to-improve-development-time-testing)
+
+1. You should be able to use the accessToken to make authenticated requests to the todo endpoints.
 
 ### Social authentication
 
